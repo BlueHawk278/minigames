@@ -1,31 +1,41 @@
-from turtle import Turtle
 import random
-
-COLORS = ["red", "orange", "yellow", "green", "blue", "purple"]
-STARTING_MOVE_DISTANCE = 5
-MOVE_INCREMENT = 10
+import pygame
 
 
 class CarManager:
+    def __init__(self, width: int, height: int):
+        self.width = width
+        self.height = height
+        self.cars = []
+        self.car_speed = 220
+        self.spawn_timer = 0.0
+        self.spawn_interval = 0.45
 
-    def __init__(self):
-        self.all_cars = []
-        self.car_speed = STARTING_MOVE_DISTANCE
+    def increase_speed(self):
+        self.car_speed += 20
 
-    def create_car(self):
-        random_chance = random.randint(1, 6)
-        if random_chance == 1:
-            new_car = Turtle("square")
-            new_car.shapesize(stretch_wid=1, stretch_len=2)
-            new_car.penup()
-            new_car.color(random.choice(COLORS))
-            random_y = random.randint(-250, 250)
-            new_car.goto(300, random_y)
-            self.all_cars.append(new_car)
+    def update(self, dt: float):
+        self.spawn_timer += dt
+        if self.spawn_timer >= self.spawn_interval:
+            self.spawn_timer = 0.0
+            car_h = 26
+            car_w = random.randint(45, 75)
+            y = random.randint(60, self.height - 60)
+            rect = pygame.Rect(self.width + car_w, y, car_w, car_h)
+            color = (
+                random.randint(80, 255),
+                random.randint(80, 255),
+                random.randint(80, 255),
+            )
+            self.cars.append((rect, color))
 
-    def move_cars(self):
-        for car in self.all_cars:
-            car.backward(self.car_speed)
+        updated = []
+        for rect, color in self.cars:
+            rect.x -= int(self.car_speed * dt)
+            if rect.right > 0:
+                updated.append((rect, color))
+        self.cars = updated
 
-    def level_up(self):
-        self.car_speed += MOVE_INCREMENT
+    def draw(self, surface: pygame.Surface):
+        for rect, color in self.cars:
+            pygame.draw.rect(surface, color, rect, border_radius=6)

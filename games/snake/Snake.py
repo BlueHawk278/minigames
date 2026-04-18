@@ -1,63 +1,62 @@
-from turtle import Turtle
+import pygame
+
 STARTING_POSITIONS = [(0, 0), (-20, 0), (-40, 0)]
 MOVE_DISTANCE = 20
-UP = 90
-DOWN = 270
-LEFT = 180
-RIGHT = 0
+UP = (0, -1)
+DOWN = (0, 1)
+LEFT = (-1, 0)
+RIGHT = (1, 0)
+
 
 class Snake:
     def __init__(self):
         self.segments = []
+        self.direction = RIGHT
         self.create_snake()
-        self.head = self.segments[0]
+
+    @property
+    def head(self):
+        return self.segments[0]
 
     def create_snake(self):
-        for position in STARTING_POSITIONS:
-            self.add_segment(position)
-
-    def add_segment(self, position):
-        new_segment = Turtle("square")
-        new_segment.color("white")
-        new_segment.penup()
-        new_segment.goto(position)
-        self.segments.append(new_segment)
+        self.segments = list(STARTING_POSITIONS)
+        self.direction = RIGHT
 
     def extend(self):
-        self.add_segment(self.segments[-1].position())
+        self.segments.append(self.segments[-1])
 
     def move(self):
-        for seg_num in range(len(self.segments) - 1, 0, -1):
-            new_x = self.segments[seg_num - 1].xcor()
-            new_y = self.segments[seg_num - 1].ycor()
-            self.segments[seg_num].goto(new_x, new_y)
-        self.head.forward(MOVE_DISTANCE)
+        for i in range(len(self.segments) - 1, 0, -1):
+            self.segments[i] = self.segments[i - 1]
 
-    # Creates a new snake when the old one dies
+        hx, hy = self.head
+        dx, dy = self.direction
+        self.segments[0] = (hx + dx * MOVE_DISTANCE, hy + dy * MOVE_DISTANCE)
+
     def reset_snake(self):
-        self.segments.clear()
-        self.segments = []
         self.create_snake()
-        self.head = self.segments[0]
 
-    # When the old snake dies, we send it off the map so it can't affect the scoreboard
     def kill(self):
-        for seg in self.segments:
-            seg.color("black")
-            seg.goto(0, 500)
+        self.segments.clear()
 
     def up(self):
-        if self.head.heading() != DOWN:
-            self.head.setheading(UP)
+        if self.direction != DOWN:
+            self.direction = UP
 
     def down(self):
-        if self.head.heading() != UP:
-            self.head.setheading(DOWN)
+        if self.direction != UP:
+            self.direction = DOWN
 
     def left(self):
-        if self.head.heading() != RIGHT:
-            self.head.setheading(LEFT)
+        if self.direction != RIGHT:
+            self.direction = LEFT
 
     def right(self):
-        if self.head.heading() != LEFT:
-            self.head.setheading(RIGHT)
+        if self.direction != LEFT:
+            self.direction = RIGHT
+
+    def draw(self, surface: pygame.Surface, center_x: int, center_y: int):
+        for x, y in self.segments:
+            sx = center_x + x - 10
+            sy = center_y + y - 10
+            pygame.draw.rect(surface, (255, 255, 255), (sx, sy, 20, 20), border_radius=3)

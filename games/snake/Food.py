@@ -1,21 +1,19 @@
-from turtle import Turtle
 import random
+import pygame
 
-class Food(Turtle):
+
+class Food:
     def __init__(self):
-        super().__init__()
-        self.shape("turtle")
-        self.penup()
-        self.shapesize(stretch_len=0.5, stretch_wid=0.5)
-        self.color("blue")
-        self.speed("fastest")
+        self.position = (0, 0)
         self.refresh()
 
-    # When there is a collision with the food, this method moves it to somewhere else
     def refresh(self):
-        # pick coordinates snapped to the 20px grid within safe bounds
         possible_x = range(-280, 281, 20)
         possible_y = range(-280, 281, 20)
-        random_x = random.choice(possible_x)
-        random_y = random.choice(possible_y)
-        self.goto(random_x, random_y)
+        self.position = (random.choice(possible_x), random.choice(possible_y))
+
+    def draw(self, surface: pygame.Surface, center_x: int, center_y: int):
+        x, y = self.position
+        sx = center_x + x - 8
+        sy = center_y + y - 8
+        pygame.draw.rect(surface, (50, 150, 255), (sx, sy, 16, 16), border_radius=4)

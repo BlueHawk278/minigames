@@ -1,26 +1,20 @@
-from turtle import Turtle
-
-FONT = ("Courier", 24, "normal")
+import pygame
 
 
-class Scoreboard(Turtle):
-
+class Scoreboard:
     def __init__(self):
-        super().__init__()
         self.level = 1
-        self.hideturtle()
-        self.penup()
-        self.goto(-280, 250)
-        self.update_scoreboard()
-
-    def update_scoreboard(self):
-        self.clear()
-        self.write(f"Level: {self.level}", align="left", font=FONT)
+        self.font = pygame.font.Font(None, 38)
 
     def increase_level(self):
         self.level += 1
-        self.update_scoreboard()
 
-    def game_over(self):
-        self.goto(0, 0)
-        self.write(f"GAME OVER", align="center", font=FONT)
+    def draw(self, surface: pygame.Surface):
+        txt = self.font.render(f"Level: {self.level}", True, (255, 255, 255))
+        surface.blit(txt, (20, 20))
+
+    def draw_game_over(self, surface: pygame.Surface, width: int, height: int):
+        over = self.font.render("GAME OVER", True, (255, 80, 80))
+        hint = pygame.font.Font(None, 32).render("Press R to retry or ESC for menu", True, (220, 220, 220))
+        surface.blit(over, over.get_rect(center=(width // 2, height // 2 - 20)))
+        surface.blit(hint, hint.get_rect(center=(width // 2, height // 2 + 20)))

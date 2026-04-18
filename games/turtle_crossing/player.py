@@ -1,27 +1,20 @@
-from turtle import Turtle
-
-STARTING_POSITION = (0, -280)
-MOVE_DISTANCE = 10
-FINISH_LINE_Y = 280
+import pygame
 
 
-class Player(Turtle):
+class Player:
+    def __init__(self, start_x: int, start_y: int):
+        self.width = 22
+        self.height = 22
+        self.start_x = start_x
+        self.start_y = start_y
+        self.rect = pygame.Rect(start_x, start_y, self.width, self.height)
+        self.move_step = 25
 
-    def __init__(self):
-        super().__init__()
-        self.shape("turtle")
-        self.penup()
-        self.go_to_start()
-        self.setheading(90)
+    def move_up(self):
+        self.rect.y -= self.move_step
 
-    def go_up(self):
-        self.forward(MOVE_DISTANCE)
+    def reset_position(self):
+        self.rect.topleft = (self.start_x, self.start_y)
 
-    def go_to_start(self):
-        self.goto(STARTING_POSITION)
-
-    def is_at_finish_line(self):
-        if self.ycor() > FINISH_LINE_Y:
-            return True
-        else:
-            return False
+    def draw(self, surface: pygame.Surface):
+        pygame.draw.rect(surface, (50, 220, 100), self.rect, border_radius=6)
