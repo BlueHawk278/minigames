@@ -1,49 +1,34 @@
-from turtle import Turtle
-import time
+import pygame
 
-class Ball(Turtle):
-    def __init__(self):
-        super().__init__()
-        self.shape("circle")
-        self.color("white")
-        self.penup()
-        self.goto(0, 0)
-        self.x_move = 10
-        self.y_move = 10
-        self.move_speed = 0.1
 
-    def move(self):
-        new_x = self.xcor() + self.x_move
-        new_y = self.ycor() + self.y_move
-        self.goto(new_x, new_y)
+class Ball:
+    def __init__(self, x: int, y: int, radius: int = 10):
+        self.start_x = x
+        self.start_y = y
+        self.radius = radius
+        self.reset(to_right=True)
 
-    def bounce_y(self):
-        self.y_move *= -1
+    def reset(self, to_right: bool = True) -> None:
+        self.x = float(self.start_x)
+        self.y = float(self.start_y)
+        self.vx = 360.0 if to_right else -360.0
+        self.vy = 230.0
 
-    def bounce_x(self):
-        self.x_move *= -1
-        self.move_speed *= 0.9  # Speed up after each paddle hit
+    @property
+    def rect(self) -> pygame.Rect:
+        return pygame.Rect(int(self.x - self.radius), int(self.y - self.radius), self.radius * 2, self.radius * 2)
 
-    def detect_wall_collision(self):
-        if self.ycor() > 280 or self.ycor() < -280:
-            self.bounce_y()
+    def update(self, dt: float) -> None:
+        self.x += self.vx * dt
+        self.y += self.vy * dt
 
-    def detect_paddle_collision(self, paddle):
-        # Check if ball is near paddle and at correct x position
-        if (self.distance(paddle) < 50 and
-                abs(self.xcor() - paddle.xcor()) < 20):
-            self.bounce_x()
+    def bounce_y(self) -> None:
+        self.vy *= -1
 
-    def is_out_of_bounds(self):
-        """Returns 'left' if out left, 'right' if out right, else None."""
-        if self.xcor() > 380:
-            return "right"
-        elif self.xcor() < -380:
-            return "left"
-        return None
+    def bounce_x(self) -> None:
+        self.vx *= -1
+        self.vx *= 1.03
+        self.vy *= 1.03
 
-    def reset_position(self):
-        self.goto(0, 0)
-        self.move_speed = 0.05
-        self.bounce_x()
-        time.sleep(1)
+    def draw(self, surface: pygame.Surface) -> None:
+        pygame.draw.circle(surface, (255, 255, 255), (int(self.x), int(self.y)), self.radius)

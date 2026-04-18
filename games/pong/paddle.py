@@ -1,20 +1,22 @@
-from turtle import Turtle
+import pygame
 
 
-class Paddle(Turtle):
+class Paddle:
+    def __init__(self, x: int, y: int, width: int = 20, height: int = 100, speed: int = 420):
+        self.rect = pygame.Rect(x, y, width, height)
+        self.speed = speed
 
-    def __init__(self, position):
-        super().__init__()
-        self.shape("square")
-        self.color("white")
-        self.shapesize(stretch_wid=5, stretch_len=1)
-        self.penup()
-        self.goto(position)
+    def move_up(self, dt: float):
+        self.rect.y -= int(self.speed * dt)
 
-    def go_up(self):
-        new_y = self.ycor() + 20
-        self.goto(self.xcor(), new_y)
+    def move_down(self, dt: float):
+        self.rect.y += int(self.speed * dt)
 
-    def go_down(self):
-        new_y = self.ycor() - 20
-        self.goto(self.xcor(), new_y)
+    def clamp(self, screen_height: int):
+        if self.rect.top < 0:
+            self.rect.top = 0
+        if self.rect.bottom > screen_height:
+            self.rect.bottom = screen_height
+
+    def draw(self, surface: pygame.Surface):
+        pygame.draw.rect(surface, (255, 255, 255), self.rect, border_radius=6)
