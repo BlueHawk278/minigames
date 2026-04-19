@@ -13,7 +13,7 @@ def run(screen: pygame.Surface):
     cars = CarManager(width, height)
     scoreboard = Scoreboard()
 
-    state = "start"  # start, playing, game_over
+    state = "start"
 
     while True:
         dt = clock.tick(60) / 1000.0
