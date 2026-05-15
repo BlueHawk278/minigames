@@ -8,8 +8,8 @@ class Food:
         self.refresh()
 
     def refresh(self):
-        possible_x = range(-280, 281, 20)
-        possible_y = range(-280, 281, 20)
+        possible_x = range(-400, 400, 20)
+        possible_y = range(-300, 300, 20)
         self.position = (random.choice(possible_x), random.choice(possible_y))
 
     def draw(self, surface: pygame.Surface, center_x: int, center_y: int):

@@ -50,7 +50,7 @@ def run(screen: pygame.Surface):
                 scoreboard.increase_score()
 
             hx, hy = snake.head
-            if hx > 280 or hx < -280 or hy > 300 or hy < -350:
+            if hx > 400 or hx < -400 or hy > 300 or hy < -300:
                 snake.reset_snake()
                 scoreboard.reset()
                 game_started = False
@@ -63,7 +63,7 @@ def run(screen: pygame.Surface):
                     break
 
         screen.fill((0, 0, 0))
-        pygame.draw.line(screen, (255, 255, 255), (center_x - 300, center_y - 300), (center_x + 300, center_y - 300), 2)
+        pygame.draw.line(screen, (255, 255, 255), (center_x - 400, center_y - 300), (center_x + 400, center_y - 300), 2)
 
         snake.draw(screen, center_x, center_y)
         food.draw(screen, center_x, center_y)
